@@ -24,8 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
+                .anyRequest().authenticated().and().addFilter(getAuthenticationFilter());
     }
 
     @Override
@@ -33,4 +33,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
     }
 
+    public AuthenticationFilter getAuthenticationFilter() throws Exception {
+        final AuthenticationFilter authenticationFilter= new AuthenticationFilter(authenticationManager());
+
+        authenticationFilter.setFilterProcessesUrl("/users/login");
+
+        return authenticationFilter;
+    }
 }

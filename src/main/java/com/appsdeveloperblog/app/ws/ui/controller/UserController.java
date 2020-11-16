@@ -6,6 +6,7 @@ import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.appsdeveloperblog.app.ws.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,9 +23,20 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @GetMapping(value = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public UserRest getUser(@PathVariable String userId) {
+        UserRest returnValue = new UserRest();
+
+        UserDto user = userService.getUserById(userId);
+
+        BeanUtils.copyProperties(user, returnValue);
+
+        return returnValue;
+    }
+
+    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
-        System.out.println(userDetails);
         UserRest returnValue = new UserRest();
 
         UserDto userDto = new UserDto();

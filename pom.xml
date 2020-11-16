@@ -12,7 +12,8 @@
     <artifactId>springboot-app-ws</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>springboot-app-ws</name>
-    <description>RESTful Web Service application with Java, Spring MVC, Spring Boot, Spring Data JPA and AWS</description>
+    <description>RESTful Web Service application with Java, Spring MVC, Spring Boot, Spring Data JPA and AWS
+    </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,6 +60,10 @@
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
     </dependencies>
 

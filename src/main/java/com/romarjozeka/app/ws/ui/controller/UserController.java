@@ -23,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(path = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest getUser(@PathVariable String userId) {
         UserRest returnValue = new UserRest();
 
@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public UserRest createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) throws Exception{
+    public UserRest createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) throws Exception {
         UserRest returnValue = new UserRest();
 
         UserDto userDto = new UserDto();
@@ -46,6 +46,23 @@ public class UserController {
         UserDto createdUser = userService.createUser(userDto);
 
         BeanUtils.copyProperties(createdUser, returnValue);
+
+        return returnValue;
+    }
+
+    @PutMapping(path="/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public UserRest updateUser(@PathVariable String userId, @Valid @RequestBody UserDetailsRequestModel userDetails) throws Exception {
+
+        UserRest returnValue = new UserRest();
+
+        UserDto userDto = new UserDto();
+
+        BeanUtils.copyProperties(userDetails, userDto);
+
+        UserDto updatedUser = userService.updateUser(userId, userDto);
+
+        BeanUtils.copyProperties(updatedUser, returnValue);
 
         return returnValue;
     }

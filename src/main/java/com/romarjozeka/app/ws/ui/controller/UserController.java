@@ -3,6 +3,9 @@ package com.romarjozeka.app.ws.ui.controller;
 import com.romarjozeka.app.ws.service.impl.UserServiceImpl;
 import com.romarjozeka.app.ws.shared.dto.UserDto;
 import com.romarjozeka.app.ws.ui.model.request.UserDetailsRequestModel;
+import com.romarjozeka.app.ws.ui.model.response.OperationStatusModel;
+import com.romarjozeka.app.ws.ui.model.response.RequestOperationName;
+import com.romarjozeka.app.ws.ui.model.response.RequestOperationStatus;
 import com.romarjozeka.app.ws.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,4 +69,16 @@ public class UserController {
 
         return returnValue;
     }
+
+    @DeleteMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    public OperationStatusModel deleteUser(@PathVariable String userId) {
+        OperationStatusModel returnValue = new OperationStatusModel();
+        returnValue.setOperationName(RequestOperationName.DELETE.name());
+
+        userService.deleteUser(userId);
+
+        returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        return returnValue;
+    }
+
 }

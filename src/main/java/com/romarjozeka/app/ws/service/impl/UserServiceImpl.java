@@ -95,7 +95,6 @@ public class UserServiceImpl implements UserService {
 
         if (userEntity == null) throw new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
-
         userEntity.setFirstName(userDto.getFirstName());
         userEntity.setLastName(userDto.getLastName());
 
@@ -106,5 +105,14 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(returnUpdatedUser, updatedUser);
 
         return updatedUser;
+    }
+
+    @Override
+    public void deleteUser(String userId) throws ResourceNotFoundException{
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (userEntity == null) throw new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
+        userRepository.delete(userEntity);
     }
 }

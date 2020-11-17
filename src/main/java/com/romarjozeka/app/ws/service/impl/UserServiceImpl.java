@@ -1,10 +1,12 @@
 package com.romarjozeka.app.ws.service.impl;
 
+import com.romarjozeka.app.ws.exceptions.ResourceNotFoundException;
 import com.romarjozeka.app.ws.io.entity.UserEntity;
 import com.romarjozeka.app.ws.io.repository.UserRepository;
 import com.romarjozeka.app.ws.service.UserService;
 import com.romarjozeka.app.ws.shared.Utils;
 import com.romarjozeka.app.ws.shared.dto.UserDto;
+import com.romarjozeka.app.ws.ui.model.response.ErrorMessages;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -59,11 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUser(String email) {
+    public UserDto getUser(String email) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
 
         if (userEntity == null)
-            throw new UsernameNotFoundException(email);
+            throw new UsernameNotFoundException(ErrorMessages.NO_SUCH_EMAIL_EXISTS.getErrorMessage());
 
         UserDto returnValue = new UserDto();
         BeanUtils.copyProperties(userEntity, returnValue);
@@ -72,17 +74,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(String userId) {
+    public UserDto getUserById(String userId) throws UsernameNotFoundException {
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (userEntity == null)
-            throw new UsernameNotFoundException(userId);
+            throw new UsernameNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
         UserDto returnValue = new UserDto();
 
         BeanUtils.copyProperties(userEntity, returnValue);
 
         return returnValue;
+    }
+
+    @Override
+    public UserDto updateUser(String userId, UserDto userDto) throws ResourceNotFoundException {
+
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (userEntity == null) throw new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
+
+        userEntity.setFirstName(userDto.getFirstName());
+        userEntity.setLastName(userDto.getLastName());
+
+        UserEntity returnUpdatedUser = userRepository.save(userEntity);
+
+        UserDto updatedUser = new UserDto();
+
+        BeanUtils.copyProperties(returnUpdatedUser, updatedUser);
+
+        return updatedUser;
     }
 }

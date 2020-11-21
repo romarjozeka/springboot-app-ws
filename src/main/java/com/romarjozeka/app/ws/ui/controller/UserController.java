@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -24,6 +26,26 @@ public class UserController {
     @Autowired
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
+    }
+
+
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public List<UserRest> getAllUsers(@RequestParam(value="page", defaultValue ="0") int page,
+                                      @RequestParam(value="limit", defaultValue ="25") int limit
+                                      ){
+
+        List<UserRest> returnValue= new ArrayList<>();
+
+
+      List<UserDto> list= userService.getUsers(page, limit);
+
+
+      list.forEach(getUserDto->{
+          UserRest userRest= new UserRest();
+          BeanUtils.copyProperties(getUserDto,userRest);
+          returnValue.add(userRest);
+      });
+        return returnValue;
     }
 
     @GetMapping(path = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

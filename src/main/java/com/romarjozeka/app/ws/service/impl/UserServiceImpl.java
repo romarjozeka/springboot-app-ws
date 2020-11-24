@@ -5,8 +5,10 @@ import com.romarjozeka.app.ws.io.entity.UserEntity;
 import com.romarjozeka.app.ws.io.repository.UserRepository;
 import com.romarjozeka.app.ws.service.UserService;
 import com.romarjozeka.app.ws.shared.Utils;
+import com.romarjozeka.app.ws.shared.dto.AddressDto;
 import com.romarjozeka.app.ws.shared.dto.UserDto;
 import com.romarjozeka.app.ws.ui.model.response.ErrorMessages;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,20 +38,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(UserDto user) {
+    public UserDto createUser(UserDto user) throws Exception {
 
         UserEntity userExists = userRepository.findByEmail(user.getEmail());
 
-        UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(user, userEntity);
+        if (userExists != null) throw new Exception("Account already exists!");
+
+        for (int i = 0; i < user.getAddresses().size(); i++) {
+
+            AddressDto address = user.getAddresses().get(i);
+            address.setUserDetails(user);
+            System.out.println("UserDTO: "+address.getUserDetails());
+            address.setAddressId(utils.generateAddressId(30));
+        }
+
+        ModelMapper modelMapper = new ModelMapper();
+
+        UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 
         String publicUserId = utils.generateUserId(30);
         userEntity.setUserId(publicUserId);
+
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         UserEntity savedUser = userRepository.save(userEntity);
 
-        UserDto returnNewUser = new UserDto();
-        BeanUtils.copyProperties(savedUser, returnNewUser);
+        UserDto returnNewUser = modelMapper.map(savedUser, UserDto.class);
 
         return returnNewUser;
 
@@ -112,7 +125,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String userId) throws ResourceNotFoundException{
+    public void deleteUser(String userId) throws ResourceNotFoundException {
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (userEntity == null) throw new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
@@ -123,18 +136,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUsers(int page, int limit) {
 
-        if(page>0) page--;
+        if (page > 0) page--;
         List<UserDto> returnValue = new ArrayList<>();
 
-        Pageable pageableRequest= PageRequest.of(page,limit);
+        Pageable pageableRequest = PageRequest.of(page, limit);
 
-        Page<UserEntity> pageEntity= userRepository.findAll(pageableRequest);
+        Page<UserEntity> pageEntity = userRepository.findAll(pageableRequest);
 
-        List<UserEntity> listEntity= pageEntity.getContent();
+        List<UserEntity> listEntity = pageEntity.getContent();
 
-        listEntity.forEach(getUserEntity->{
-            UserDto userDto= new UserDto();
-            BeanUtils.copyProperties(getUserEntity,userDto);
+        listEntity.forEach(getUserEntity -> {
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(getUserEntity, userDto);
             returnValue.add(userDto);
         });
 

@@ -7,6 +7,7 @@ import com.romarjozeka.app.ws.ui.model.response.OperationStatusModel;
 import com.romarjozeka.app.ws.ui.model.response.RequestOperationName;
 import com.romarjozeka.app.ws.ui.model.response.RequestOperationStatus;
 import com.romarjozeka.app.ws.ui.model.response.UserRest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,21 +31,21 @@ public class UserController {
 
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public List<UserRest> getAllUsers(@RequestParam(value="page", defaultValue ="0") int page,
-                                      @RequestParam(value="limit", defaultValue ="25") int limit
-                                      ){
+    public List<UserRest> getAllUsers(@RequestParam(value = "page", defaultValue = "0") int page,
+                                      @RequestParam(value = "limit", defaultValue = "25") int limit
+    ) {
 
-        List<UserRest> returnValue= new ArrayList<>();
-
-
-      List<UserDto> list= userService.getUsers(page, limit);
+        List<UserRest> returnValue = new ArrayList<>();
 
 
-      list.forEach(getUserDto->{
-          UserRest userRest= new UserRest();
-          BeanUtils.copyProperties(getUserDto,userRest);
-          returnValue.add(userRest);
-      });
+        List<UserDto> list = userService.getUsers(page, limit);
+
+
+        list.forEach(getUserDto -> {
+            UserRest userRest = new UserRest();
+            BeanUtils.copyProperties(getUserDto, userRest);
+            returnValue.add(userRest);
+        });
         return returnValue;
     }
 
@@ -62,20 +63,20 @@ public class UserController {
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) throws Exception {
-        UserRest returnValue = new UserRest();
 
-        UserDto userDto = new UserDto();
+        ModelMapper modelMapper = new ModelMapper();
 
-        BeanUtils.copyProperties(userDetails, userDto);
+        UserDto userDto = modelMapper.map(userDetails, UserDto.class);
+
 
         UserDto createdUser = userService.createUser(userDto);
 
-        BeanUtils.copyProperties(createdUser, returnValue);
+        UserRest returnValue = modelMapper.map(createdUser, UserRest.class);
 
         return returnValue;
     }
 
-    @PutMapping(path="/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+    @PutMapping(path = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest updateUser(@PathVariable String userId, @Valid @RequestBody UserDetailsRequestModel userDetails) throws Exception {
 
@@ -92,7 +93,7 @@ public class UserController {
         return returnValue;
     }
 
-    @DeleteMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @DeleteMapping(path = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public OperationStatusModel deleteUser(@PathVariable String userId) {
         OperationStatusModel returnValue = new OperationStatusModel();
         returnValue.setOperationName(RequestOperationName.DELETE.name());

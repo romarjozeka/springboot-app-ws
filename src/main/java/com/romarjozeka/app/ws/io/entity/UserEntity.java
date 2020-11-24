@@ -6,12 +6,13 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class UserEntity implements Serializable {
 
-    private static final long serialVersionID = 1L;
+    private static final long serialVersionUID = 3185358572190076751L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,23 +42,10 @@ public class UserEntity implements Serializable {
     @NotNull
     private boolean emailVerificationStatus = false;
 
-    public UserEntity() {
-    }
 
-    public UserEntity(long id, String userId, String firstName, String lastName, String email, String encryptedPassword, String emailVerificationToken, boolean emailVerificationStatus) {
-        this.id = id;
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.encryptedPassword = encryptedPassword;
-        this.emailVerificationToken = emailVerificationToken;
-        this.emailVerificationStatus = emailVerificationStatus;
-    }
+    @OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
+    private List<AddressEntity> addresses;
 
-    public static long getSerialVersionID() {
-        return serialVersionID;
-    }
 
     public long getId() {
         return id;
@@ -121,5 +109,16 @@ public class UserEntity implements Serializable {
 
     public void setEmailVerificationStatus(boolean emailVerificationStatus) {
         this.emailVerificationStatus = emailVerificationStatus;
+    }
+    public boolean isEmailVerificationStatus() {
+        return emailVerificationStatus;
+    }
+
+    public List<AddressEntity> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<AddressEntity> addresses) {
+        this.addresses = addresses;
     }
 }

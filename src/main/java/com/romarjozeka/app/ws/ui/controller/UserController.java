@@ -130,4 +130,18 @@ public class UserController {
 
         return returnValue;
     }
+
+    @GetMapping(path = "/{userId}/addresses/{addressId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public AddressRest getAddress(@PathVariable String addressId) {
+
+        AddressRest returnValue = new AddressRest();
+
+        AddressDto addressDto = addressService.getAddressById(addressId);
+
+        if (addressDto == null) throw new ResourceNotFoundException("Tha address was not found!");
+
+        BeanUtils.copyProperties(addressDto, returnValue);
+
+        return returnValue;
+    }
 }

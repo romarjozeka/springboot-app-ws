@@ -7,6 +7,7 @@ import com.romarjozeka.app.ws.io.repository.UserRepository;
 import com.romarjozeka.app.ws.service.AddressService;
 import com.romarjozeka.app.ws.shared.dto.AddressDto;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,18 @@ public class AddressServiceImpl implements AddressService {
         for (AddressEntity addressEntity : addresses) {
             returnValue.add(modelMapper.map(addressEntity, AddressDto.class));
         }
+
+        return returnValue;
+    }
+
+    @Override
+    public AddressDto getAddressById(String addressId) {
+
+        AddressDto returnValue = new AddressDto();
+
+        AddressEntity addressEntity = addressRepository.findByAddressId(addressId);
+
+        BeanUtils.copyProperties(addressEntity, returnValue);
 
         return returnValue;
     }

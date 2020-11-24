@@ -11,7 +11,7 @@
     <groupId>com.romarjozeka.app.ws</groupId>
     <artifactId>springboot-app-ws</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>springboot-app-ws</name>
     <description>RESTful Web Service application with Java, Spring MVC, Spring Boot, Spring Data JPA and AWS
     </description>
@@ -37,8 +37,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency><dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>

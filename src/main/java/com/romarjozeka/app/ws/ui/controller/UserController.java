@@ -1,19 +1,21 @@
 package com.romarjozeka.app.ws.ui.controller;
 
+import com.romarjozeka.app.ws.exceptions.ResourceNotFoundException;
+import com.romarjozeka.app.ws.service.impl.AddressServiceImpl;
 import com.romarjozeka.app.ws.service.impl.UserServiceImpl;
+import com.romarjozeka.app.ws.shared.dto.AddressDto;
 import com.romarjozeka.app.ws.shared.dto.UserDto;
 import com.romarjozeka.app.ws.ui.model.request.UserDetailsRequestModel;
-import com.romarjozeka.app.ws.ui.model.response.OperationStatusModel;
-import com.romarjozeka.app.ws.ui.model.response.RequestOperationName;
-import com.romarjozeka.app.ws.ui.model.response.RequestOperationStatus;
-import com.romarjozeka.app.ws.ui.model.response.UserRest;
+import com.romarjozeka.app.ws.ui.model.response.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +25,17 @@ public class UserController {
 
 
     private UserServiceImpl userService;
+    private AddressServiceImpl addressService;
 
     @Autowired
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserServiceImpl userService, AddressServiceImpl addressService) {
         this.userService = userService;
+        this.addressService = addressService;
     }
 
+    /**
+     * Users
+     */
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<UserRest> getAllUsers(@RequestParam(value = "page", defaultValue = "0") int page,
@@ -104,4 +111,23 @@ public class UserController {
         return returnValue;
     }
 
+
+    /**
+     * Addresses
+     */
+
+    @GetMapping(path = "/{userId}/addresses", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public List<AddressRest> getAddresses(@PathVariable String userId) {
+
+        List<AddressDto> list = addressService.getAddresses(userId);
+
+        if (list == null && list.isEmpty()) throw new ResourceNotFoundException("No addresses found!");
+
+        Type listType = new TypeToken<List<AddressRest>>() {
+        }.getType();
+
+        List<AddressRest> returnValue = new ModelMapper().map(list, listType);
+
+        return returnValue;
+    }
 }

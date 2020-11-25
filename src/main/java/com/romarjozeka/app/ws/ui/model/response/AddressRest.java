@@ -1,8 +1,8 @@
 package com.romarjozeka.app.ws.ui.model.response;
 
-import java.io.Serializable;
+import org.springframework.hateoas.RepresentationModel;
 
-public class AddressRest implements Serializable {
+public class AddressRest extends RepresentationModel<AddressRest> {
 
     private String addressId;
     private String type;

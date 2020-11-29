@@ -5,6 +5,7 @@ import com.romarjozeka.app.ws.service.impl.AddressServiceImpl;
 import com.romarjozeka.app.ws.service.impl.UserServiceImpl;
 import com.romarjozeka.app.ws.shared.dto.AddressDto;
 import com.romarjozeka.app.ws.shared.dto.UserDto;
+import com.romarjozeka.app.ws.ui.model.request.PasswordResetRequestModel;
 import com.romarjozeka.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.romarjozeka.app.ws.ui.model.response.*;
 import org.modelmapper.ModelMapper;
@@ -166,8 +167,8 @@ public class UserController {
         return EntityModel.of(returnValue, Arrays.asList(userLink, addressLink, selfLink));
     }
 
-    @GetMapping(path = "/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
-            MediaType.APPLICATION_XML_VALUE })
+    @GetMapping(path = "/email-verification", produces = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE})
     public OperationStatusModel verifyEmailToken(@RequestParam(value = "token") String token) {
 
         OperationStatusModel returnValue = new OperationStatusModel();
@@ -175,8 +176,7 @@ public class UserController {
 
         boolean isVerified = userService.verifyEmailToken(token);
 
-        if(isVerified)
-        {
+        if (isVerified) {
             returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
         } else {
             returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
@@ -185,5 +185,23 @@ public class UserController {
         return returnValue;
     }
 
+    @PostMapping(path = "/password-reset-request",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestModel passwordResetRequestModel) {
+        OperationStatusModel returnValue = new OperationStatusModel();
+
+        boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
+
+        returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+
+        if (operationResult) {
+            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        }
+
+        return returnValue;
+    }
 
 }

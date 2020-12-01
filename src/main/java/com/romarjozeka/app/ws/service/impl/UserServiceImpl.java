@@ -33,13 +33,15 @@ public class UserServiceImpl implements UserService {
     private PasswordResetTokenRepository passwordResetTokenRepository;
     private Utils utils;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private AmazonSES amazonSES;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, Utils utils, BCryptPasswordEncoder bCryptPasswordEncoder, PasswordResetTokenRepository passwordResetTokenRepository) {
+    public UserServiceImpl(UserRepository userRepository, Utils utils, BCryptPasswordEncoder bCryptPasswordEncoder, PasswordResetTokenRepository passwordResetTokenRepository, AmazonSES amazonSES) {
         this.userRepository = userRepository;
         this.utils = utils;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.amazonSES = amazonSES;
     }
 
     @Override
@@ -47,7 +49,8 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userExists = userRepository.findByEmail(user.getEmail());
 
-        if (userExists != null) throw new Exception("Account already exists!");
+        if (userExists != null)
+            throw new Exception("Account already exists!");
 
         for (int i = 0; i < user.getAddresses().size(); i++) {
 
@@ -72,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
         UserDto returnNewUser = modelMapper.map(savedUser, UserDto.class);
 
-        new AmazonSES().verifyEmail(returnNewUser);
+        amazonSES.verifyEmail(returnNewUser);
 
         return returnNewUser;
 
@@ -213,8 +216,7 @@ public class UserServiceImpl implements UserService {
     public boolean resetPassword(String token, String password) {
         boolean returnValue = false;
 
-        if( Utils.hasTokenExpired(token) )
-        {
+        if (Utils.hasTokenExpired(token)) {
             return returnValue;
         }
 

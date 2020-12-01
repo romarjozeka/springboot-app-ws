@@ -5,7 +5,9 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
 import com.romarjozeka.app.ws.shared.dto.UserDto;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AmazonSES {
 
     private static final String FROM = "romarjozeka@gmail.com";

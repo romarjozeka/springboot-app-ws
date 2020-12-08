@@ -3,12 +3,21 @@ package com.romarjozeka.app.ws.shared.dto;
 public class AddressDto {
     private long id;
     private String addressId;
-    private UserDto userDetails;
     private String type;
     private String addressName;
     private String postcode;
     private String country;
     private String city;
+    private UserDto userDetails;
+
+    public UserDto getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(UserDto userDetails) {
+        this.userDetails = userDetails;
+    }
+
 
     public long getId() {
         return id;
@@ -24,14 +33,6 @@ public class AddressDto {
 
     public void setAddressId(String addressId) {
         this.addressId = addressId;
-    }
-
-    public UserDto getUserDetails() {
-        return userDetails;
-    }
-
-    public void setUserDetails(UserDto userDetails) {
-        this.userDetails = userDetails;
     }
 
     public String getType() {

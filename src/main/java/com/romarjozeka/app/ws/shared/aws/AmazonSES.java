@@ -17,7 +17,7 @@ public class AmazonSES {
     private static final String HTMLBODY = "<h1>Please verify your email address</h1>"
             + "<p>Thank you for registering. To complete registration process and be able to log in,"
             + " click on the following link: "
-            + "<a href='http://localhost:8080/users/email-verification?token=$tokenValue'>"
+            + "<a href='http://localhost:8080/springboot-app-ws/users/email-verification?token=$tokenValue'>"
             + "Final step to complete your registration" + "</a><br/><br/>"
             + "Thank you!";
 
@@ -26,7 +26,7 @@ public class AmazonSES {
     private final String PASSWORD_RESET_HTMLBODY = "<h1>A request to reset your password</h1>"
             + "<p>Someone has requested to reset your password. If it were not you, please ignore it."
             + " Otherwise please click on the link below to set a new password: "
-            + "<a href='http://localhost:8080/users/password-reset-request?token=$tokenValue'>"
+            + "<a href='http://localhost:8080/springboot-app-ws/users/password-reset-request?token=$tokenValue'>"
             + " Click this link to Reset Password"
             + "</a><br/><br/>"
             + "Thank you!";

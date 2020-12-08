@@ -1,5 +1,7 @@
 package com.romarjozeka.app.ws.io.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","addresses"})
 public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 3185358572190076751L;
